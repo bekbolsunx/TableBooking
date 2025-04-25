@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manager bookings</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --primary-hover: #3e5770;
+            --background: #F4F6F7;
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        .navbar {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 2rem auto;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.6s ease;
+        }
+
+        h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-top: 0;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            padding: 2rem 0;
+        }
+
+        .actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .actions a {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .actions a:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+
+
+
+        .filters {
+            display: flex;
+            gap: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .filters a {
+            padding: 0.4rem 0.75rem;
+            border-radius: 5px;
+            background: #ddd;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.2s;
+        }
+        .filters a.active {
+            background: var(--primary);
+            color: white;
+        }
+        .summary {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+        .date-summary span {
+            font-size: 0.9rem;
+            color: #666;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        TableBook — Cafe bookings
+    </div>
+
+    <div class="container">
+        <h2>History of bookings</h2>
+
+        <!-- ── FILTER BUTTONS ── -->
+        <div class="filters">
+            <!-- ── DATE RANGE FILTER ── -->
+            <form method="get" class="filters" style="margin-bottom:1rem; gap:0.5rem;">
+                <!-- preserve any existing named filter -->
+                <input type="hidden" name="filter" value="{{ current_filter }}"/>
+            
+                <label>
+                <strong>From</strong>
+                <input type="date" name="date_from" value="{{ date_from }}">
+                </label>
+            
+                <label>
+                <strong>To</strong>
+                <input type="date" name="date_to" value="{{ date_to }}">
+                </label>
+            
+                <button type="submit" style="
+                    padding:0.4rem 0.75rem;
+                    border:none;
+                    border-radius:5px;
+                    background:var(--primary);
+                    color:white;
+                    cursor:pointer;
+                ">Apply</button>
+            </form>
+  
+            <a href="?filter=all"
+               class="{% if not current_filter or current_filter == 'all' %}active{% endif %}">
+                All
+            </a>
+            <a href="?filter=today"
+               class="{% if current_filter == 'today' %}active{% endif %}">
+                Today
+            </a>
+            <a href="?filter=upcoming"
+               class="{% if current_filter == 'upcoming' %}active{% endif %}">
+                Upcoming
+            </a>
+        </div>
+
+        <!-- ── SUMMARY ── -->
+        <p class="summary">
+            Showing <strong>{{ total_count }}</strong> booking{{ total_count|pluralize }}.
+        </p>
+        <div class="date-summary">
+            {% for item in date_summary %}
+                <span>{{ item.date }}: {{ item.count }} booking{{ item.count|pluralize }}</span>
+                {% if not forloop.last %}·{% endif %}
+            {% endfor %}
+        </div>
+
+        <ul>
+            {% for b in bookings %}
+                <li>
+                    <strong>{{ b.user.username }}</strong>
+                    booked at
+                    <strong>{{ b.cafe.name }}</strong>
+                    on
+
+                    <strong><time class="utc-time"
+                          data-utc="{{ b.date|date:'Y-m-d' }}T{{ b.time|time:'H:i:s' }}Z">
+                        {{ b.date }} at {{ b.time }}
+                    </time>
+                    </strong>
+                </li>
+            {% empty %}
+                <div class="empty">No bookings yet.</div>
+            {% endfor %}
+        </ul>
+
+        <div class="actions">
+            <a href="{% url 'manager_home' %}">← Back to home</a>
+        </div>
+    </div>
+
+    <!-- JavaScript to convert UTC datetime to local -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          document.querySelectorAll('.utc-time').forEach(function(elem) {
+              const utc = elem.getAttribute('data-utc');
+              const local = new Date(utc);
+              elem.textContent = local.toLocaleString();
+          });
+      });
+    </script>
+
+</body>
+</html>

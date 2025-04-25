@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --primary-hover: #3E5770;
+            --background: #F4F6F7;
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            padding: 3rem 4rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(44, 62, 80, 0.15);
+            animation: fadeIn 0.8s ease;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 1.2rem;
+            justify-content: center;
+        }
+
+        .btn-container a button {
+            background-color: var(--primary);
+            border: none;
+            color: white;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-container a button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Welcome to the Cafe Table Booking App</h1>
+
+        <div class="btn-container">
+            <a href="{% url 'login' %}">
+                <button>Login</button>
+            </a>
+            <a href="{% url 'register' %}">
+                <button>Register</button>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>

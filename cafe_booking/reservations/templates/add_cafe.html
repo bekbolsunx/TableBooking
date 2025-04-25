@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% if form.instance.id %}Edit Cafe{% else %}Add Cafe{% endif %}</title>
+    <style>
+        :root {
+            --primary: #2C3E50;            /* Deep Blue */
+            --primary-hover: #3E5770;      /* Slightly lighter blue */
+            --background: #F4F6F7;         /* Light background */
+            --card-bg: #FFFFFF;            /* White cards */
+            --text: #2D3436;               /* Dark text */
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        .navbar {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 2.5rem auto;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(44, 62, 80, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.6rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        input, textarea, select {
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #fdfdfd;
+            color: var(--text);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: 2px solid var(--primary);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .back-link:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        TableBook — {% if form.instance.id %}Edit Cafe{% else %}Add Cafe{% endif %}
+    </div>
+
+    <div class="container">
+        <h2>{% if form.instance.id %}Edit Cafe{% else %}Add Cafe{% endif %}</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            <label for="{{ form.name.id_for_label }}">Name</label>
+            {{ form.name }}
+
+            <label for="{{ form.motto.id_for_label }}">Motto</label>
+            {{ form.motto }}
+
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+
+            <label for="{{ form.address.id_for_label }}">Address</label>
+            {{ form.address }}
+
+            <label for="{{ form.table_count.id_for_label }}">Table Count</label>
+            {{ form.table_count }}
+
+            <button type="submit">Save</button>
+        </form>
+
+        <a class="back-link" href="{% url 'manager_cafes' %}">← Back to My Cafes</a>
+    </div>
+
+</body>
+</html>

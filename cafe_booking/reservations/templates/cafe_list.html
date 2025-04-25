@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Available cafes</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --primary-hover: #3E5770;
+            --background: #F4F6F7;
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+            --muted: #666666;
+            --shadow: rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        .navbar {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 2.5rem auto;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-top: 0;
+            font-size: 1.8rem;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        li {
+            background-color: var(--card-bg);
+            margin-bottom: 1rem;
+            padding: 1.2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        li:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px var(--shadow);
+        }
+
+        .cafe-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-bottom: 0.2rem;
+        }
+
+        .cafe-motto {
+            font-style: normal;
+            font-weight: normal;
+            color: var(--muted);
+        }
+
+        .cafe-desc {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin: 0.5rem 0;
+        }
+
+
+        .cafe-meta {
+            font-size: 0.95rem;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .back-link:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px var(--shadow);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <strong>TableBook</strong> — Cafes
+    </div>
+
+    <div class="container">
+        <h1>Available cafes</h1>
+        <ul>
+            {% for cafe in cafes %}
+                <li>
+                    <div class="cafe-title">
+                        {{ cafe.name }}
+                        {% if cafe.motto %}
+                            <span class="cafe-motto"> — {{ cafe.motto }}</span>
+                        {% endif %}
+                    </div>
+
+                    {% if cafe.description %}
+                        <div class="cafe-desc">{{ cafe.description }}</div>
+                    {% endif %}
+                    
+                    <div class="cafe-meta">
+                        Address: {{ cafe.address }}<br>
+                        {% comment %} Tables available: {{ cafe.table_count }} {% endcomment %}
+                    </div>
+                </li>
+            {% empty %}
+                <li>No cafes found.</li>
+            {% endfor %}
+        </ul>
+
+        <a class="back-link" href="{% url 'manager_home' %}">← Back to home</a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book a table</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --primary-hover: #3E5770;
+            --background: #F4F6F7;
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+            --error: #E74C3C;
+            --muted: #888888;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        .navbar {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 2.5rem auto;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(44, 62, 80, 0.1);
+        }
+
+        h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-top: 0;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        input, select {
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #fdfdfd;
+            color: var(--text);
+        }
+
+        input:focus, select:focus {
+            outline: 2px solid var(--primary);
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .error-message {
+            color: var(--error);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 2rem;
+            background-color: var(--primary);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .back-link:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .local-preview {
+            text-align: center;
+            margin-top: 1rem;
+            font-style: italic;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <strong>TableBook</strong> — Book a table
+</div>
+
+<div class="container">
+    <h2>Book a table</h2>
+
+    {% if message %}
+        <p class="error-message">{{ message }}</p>
+    {% endif %}
+
+    <form id="bookingForm">
+        {% csrf_token %}
+        <label for="cafe">Cafe:</label>
+        <select name="cafe" id="cafe">
+          {% for cafe in form.fields.cafe.queryset %}
+            <option
+              value="{{ cafe.id }}"
+              data-total="{{ cafe.table_count }}"   {# we still need total behind the scenes #}
+              data-name="{{ cafe.name }}"
+            >
+              {{ cafe.name }}
+            </option>
+          {% endfor %}
+        </select>
+    
+        <label for="date">Date:</label>
+        <input type="date" name="date" id="date" required>
+    
+        <label for="time">Time:</label>
+        <input type="time" name="time" id="time" required>
+    
+        {% comment %} <div class="local-preview" id="preview">Select a date and time to see your local time</div> {% endcomment %}
+        <button type="submit">Book</button>
+    </form>
+    
+    <script>
+        
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('bookingForm');
+        const dateInput = document.getElementById('date');
+        const timeInput = document.getElementById('time');
+        const cafeSelect = document.getElementById('cafe');
+        const preview = document.getElementById('preview');
+    
+        function updatePreview() {
+            const date = dateInput.value;
+            const time = timeInput.value;
+            if (date && time) {
+                const localDT = new Date(`${date}T${time}`);
+                preview.textContent = "Your selected time: " + localDT.toLocaleString();
+            }
+        }
+    
+        dateInput.addEventListener('change', updatePreview);
+        timeInput.addEventListener('change', updatePreview);
+    
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+    
+            const date = dateInput.value;
+            const time = timeInput.value;
+            const cafeId = cafeSelect.value;
+    
+            if (!date || !time) {
+                alert("Please select date and time.");
+                return;
+            }
+    
+            // Combine and convert to UTC
+            const localDateTime = new Date(`${date}T${time}`);
+            const utcDateTime = new Date(localDateTime.getTime());
+    
+            fetch("{% url 'api_book_table' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: JSON.stringify({
+                    cafe_id: cafeId,
+                    date: utcDateTime.toISOString().split('T')[0],
+                    time: utcDateTime.toISOString().split('T')[1].substring(0, 5)
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = "{% url 'my_bookings' %}";
+                } else {
+                    preview.textContent = data.message;
+                    preview.style.color = "#E74C3C";
+                }
+            })
+            .catch(err => {
+                preview.textContent = "Error submitting booking.";
+                preview.style.color = "#E74C3C";
+            });
+        });
+    });
+    </script>
+    
+
+    <a class="back-link" href="{% url 'user_home' %}">← Back to home</a>
+</div>
+
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My bookings</title>
+  <style>
+    :root {
+      --primary: #2c3e50;
+      --secondary: #2c3e50;
+      --background: #f5f6fa;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --error: #e74c3c;
+    }
+
+    /* Global Styles */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+    }
+    
+    /* Navbar */
+    .navbar {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem 2rem;
+      font-weight: bold;
+    }
+    
+    /* Container Card */
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 8px 16px rgba(44, 62, 80, 0.1);
+    }
+    
+    h2 {
+      text-align: center;
+      color: var(--secondary);
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Booking List Styles */
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    li {
+      background-color: var(--background);
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    li:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Style for past bookings */
+    .passed {
+      opacity: 0.6;
+    }
+    
+    /* Booking information */
+    .booking-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .booking-info strong {
+      font-size: 1.1rem;
+      margin-bottom: 0.3rem;
+    }
+    
+    time {
+      font-size: 0.9rem;
+      color: var(--secondary);
+    }
+    
+    /* Actions (buttons) */
+    .actions a {
+      background-color: var(--error);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: background-color 0.2s ease;
+    }
+    
+    .actions a:hover {
+      background-color: #c0392b;
+    }
+    
+    /* Navigation buttons at bottom */
+    .buttons {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    .buttons a {
+      background-color: var(--primary);
+      color: #fff;
+      padding: 0.8rem 1.2rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: background-color 0.2s ease;
+    }
+    
+    .buttons a:hover {
+      background-color: #3E5770;
+    }
+    
+    .empty {
+      text-align: center;
+      padding: 2rem 0;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <strong>TableBook</strong> — My bookings
+  </div>
+  
+  <div class="container">
+    <h2>My bookings</h2>    
+    <p class="info-text">
+      ℹ️ You can only cancel a booking up to <strong>1 hour</strong> before its scheduled time.
+    </p>
+
+    <ul>
+      {% for b in bookings %}
+        <li class="{% if b.is_past %}passed{% endif %}">
+          <div class="booking-info">
+            <strong>{{ b.cafe.name }}</strong>
+            <time class="utc-time"
+                  data-utc="{{ b.date|date:'Y-m-d' }}T{{ b.time|time:'H:i:s' }}Z">
+              {{ b.date }} at {{ b.time }}
+            </time>
+            {% if b.is_past %}
+              <span>(Passed)</span>
+            {% endif %}
+          </div>
+          <div class="actions">
+            {% if not b.is_past %}
+            <a
+            href="{% url 'cancel_booking' b.id %}"
+            onclick="return confirm('Are you sure you want to cancel this booking?');">Cancel</a>
+            {% endif %}
+          </div>
+        </li>
+      {% empty %}
+        <div class="empty">No bookings yet.</div>
+      {% endfor %}
+    </ul>
+    
+    <div class="buttons">
+      <a href="{% url 'user_home' %}">← Back to home</a>
+      <a href="{% url 'book_table' %}">+ New Booking</a>
+    </div>
+  </div>
+  
+  <script>
+    // Convert UTC date/time to the user's local timezone
+    document.addEventListener("DOMContentLoaded", function() {
+      var timeElements = document.querySelectorAll('.utc-time');
+      timeElements.forEach(function(elem) {
+        var utcString = elem.getAttribute('data-utc');
+        var localDate = new Date(utcString);
+        console.log(utcString, localDate);
+        elem.textContent = localDate.toLocaleString();
+      });
+    });
+  </script>
+</body>
+</html>

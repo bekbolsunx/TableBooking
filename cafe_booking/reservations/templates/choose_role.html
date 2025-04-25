@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register As</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --primary-hover: #3E5770;
+            --background: #F4F6F7;
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .container {
+            background-color: var(--card-bg);
+            padding: 2.5rem 3rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(44, 62, 80, 0.15);
+        }
+
+        h2 {
+            margin-bottom: 2rem;
+            color: var(--primary);
+            font-size: 1.6rem;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-container a button {
+            background-color: var(--primary);
+            border: none;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-container a button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Register as:</h2>
+        <div class="btn-container">
+            <a href="{% url 'register' %}?role=user"><button>Regular User</button></a>
+            <a href="{% url 'register' %}?role=manager"><button>Manager</button></a>
+        </div>
+    </div>
+
+</body>
+</html>

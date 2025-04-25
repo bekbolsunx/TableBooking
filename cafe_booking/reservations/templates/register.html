@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --primary-hover: #3e5770;
+            --background: #F4F6F7;
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+            --error: #E74C3C;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .register-box {
+            background-color: var(--card-bg);
+            padding: 2.5rem 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        h2 {
+            margin-bottom: 2rem;
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.75rem;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        input, select {
+            padding: 0.8rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem;
+            outline-color: var(--primary);
+            background-color: #fdfdfd;
+        }
+
+        input::placeholder {
+            color: #aaa;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 1.5rem;
+            text-align: center;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-box">
+        <h2>Register as {{ role|title }}</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="id_username">Username</label>
+            <input type="text" name="username" id="id_username" placeholder="e.g. alex_baker" required>
+            
+            <label for="id_password1">Password</label>
+            <input type="password" name="password1" id="id_password1" placeholder="At least 8 characters" required>
+
+            <label for="id_password2">Confirm Password</label>
+            <input type="password" name="password2" id="id_password2" placeholder="Repeat your password" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+        <a class="back-link" href="{% url 'register' %}">← Go Back</a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My cafes</title>
+    <style>
+        :root {
+            --primary: #2C3E50;
+            --primary-hover: #3e5770;
+            --background: #F4F6F7;
+            --card-bg: #FFFFFF;
+            --text: #2D3436;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        .navbar {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 2rem auto;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.6s ease;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 1rem 0;
+        }
+
+        li {
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        .actions a {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .actions a:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 23rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .top-actions a {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .top-actions a:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .empty {
+            text-align: center;
+            color: #999;
+            padding: 2rem 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <strong>TableBook</strong> — My cafes
+    </div>
+
+    <div class="container">
+        <div class="top-actions">
+            <h2>My cafes</h2>
+            
+        </div>
+
+        <ul>
+            {% for cafe in cafes %}
+                <li>
+                    <strong>{{ cafe.name }}</strong>
+                    <div class="actions">
+                        <a href="{% url 'edit_cafe' cafe.id %}">Edit</a>
+                    </div>
+                </li>
+            {% empty %}
+                <div class="empty">No cafes added yet.</div>
+            {% endfor %}
+        </ul>
+        <div class="top-actions" style="justify-content: flex-end;">
+            
+            <a href="{% url 'manager_home' %}">← Back to home</a>
+            <a href="{% url 'add_cafe' %}">+ Add new cafe</a>
+        </div>
+    </div>
+
+</body>
+</html>
